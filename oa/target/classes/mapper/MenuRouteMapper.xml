@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fanfan.mapper.MenuRouteMapper" >
+  <resultMap id="BaseResultMap" type="com.fanfan.pojo.MenuRoute" >
+    <constructor >
+      <idArg column="route_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="menu_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="route_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="route_url" jdbcType="VARCHAR" javaType="java.lang.String" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    route_id, menu_id, route_name, route_url
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from menu_route
+    where route_id = #{routeId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from menu_route
+    where route_id = #{routeId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fanfan.pojo.MenuRoute" >
+    insert into menu_route (route_id, menu_id, route_name, 
+      route_url)
+    values (#{routeId,jdbcType=INTEGER}, #{menuId,jdbcType=INTEGER}, #{routeName,jdbcType=VARCHAR}, 
+      #{routeUrl,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fanfan.pojo.MenuRoute" >
+    insert into menu_route
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="routeId != null" >
+        route_id,
+      </if>
+      <if test="menuId != null" >
+        menu_id,
+      </if>
+      <if test="routeName != null" >
+        route_name,
+      </if>
+      <if test="routeUrl != null" >
+        route_url,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="routeId != null" >
+        #{routeId,jdbcType=INTEGER},
+      </if>
+      <if test="menuId != null" >
+        #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="routeName != null" >
+        #{routeName,jdbcType=VARCHAR},
+      </if>
+      <if test="routeUrl != null" >
+        #{routeUrl,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fanfan.pojo.MenuRoute" >
+    update menu_route
+    <set >
+      <if test="menuId != null" >
+        menu_id = #{menuId,jdbcType=INTEGER},
+      </if>
+      <if test="routeName != null" >
+        route_name = #{routeName,jdbcType=VARCHAR},
+      </if>
+      <if test="routeUrl != null" >
+        route_url = #{routeUrl,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where route_id = #{routeId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fanfan.pojo.MenuRoute" >
+    update menu_route
+    set menu_id = #{menuId,jdbcType=INTEGER},
+      route_name = #{routeName,jdbcType=VARCHAR},
+      route_url = #{routeUrl,jdbcType=VARCHAR}
+    where route_id = #{routeId,jdbcType=INTEGER}
+  </update>
+</mapper>

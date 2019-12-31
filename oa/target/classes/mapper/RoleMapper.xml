@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fanfan.mapper.RoleMapper" >
+  <resultMap id="BaseResultMap" type="com.fanfan.pojo.Role" >
+    <constructor >
+      <idArg column="role_id" jdbcType="INTEGER" javaType="java.lang.Integer" />
+      <arg column="role_name" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="role_code" jdbcType="VARCHAR" javaType="java.lang.String" />
+      <arg column="role_level" jdbcType="INTEGER" javaType="java.lang.Integer" />
+    </constructor>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    role_id, role_name, role_code, role_level
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select
+    <include refid="Base_Column_List" />
+    from role
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from role
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.fanfan.pojo.Role" >
+    insert into role (role_id, role_name, role_code,
+      role_level)
+    values (#{roleId,jdbcType=INTEGER}, #{roleName,jdbcType=VARCHAR}, #{roleCode,jdbcType=VARCHAR},
+      #{roleLevel,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.fanfan.pojo.Role" >
+    insert into role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        role_id,
+      </if>
+      <if test="roleName != null" >
+        role_name,
+      </if>
+      <if test="roleCode != null" >
+        role_code,
+      </if>
+      <if test="roleLevel != null" >
+        role_level,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="roleId != null" >
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="roleName != null" >
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCode != null" >
+        #{roleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="roleLevel != null" >
+        #{roleLevel,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.fanfan.pojo.Role" >
+    update role
+    <set >
+      <if test="roleName != null" >
+        role_name = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="roleCode != null" >
+        role_code = #{roleCode,jdbcType=VARCHAR},
+      </if>
+      <if test="roleLevel != null" >
+        role_level = #{roleLevel,jdbcType=INTEGER},
+      </if>
+    </set>
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.fanfan.pojo.Role" >
+    update role
+    set role_name = #{roleName,jdbcType=VARCHAR},
+      role_code = #{roleCode,jdbcType=VARCHAR},
+      role_level = #{roleLevel,jdbcType=INTEGER}
+    where role_id = #{roleId,jdbcType=INTEGER}
+  </update>
+  <select id="queryAllRole" resultMap="getMenuList">
+    select
+    <include refid="Base_Column_List" />
+    from role
+  </select>
+  <resultMap id="getMenuList" type="com.fanfan.dto.RoleMenuDTO">
+    <id property="roleId" column="role_id" javaType="Integer" jdbcType="INTEGER"></id>
+    <collection property="menuList" column="role_id" select="queryMenuByRoleId"></collection>
+  </resultMap>
+  <select id="queryMenuByRoleId" resultType="com.fanfan.pojo.Menu">
+        SELECT
+            m.menu_id,
+            m.menu_name,
+            m.menu_url,
+            m.parent_id,
+            m.icon
+        FROM
+            (
+                SELECT
+                    menu_id
+                FROM
+                    menu_role
+                WHERE
+                    role_id = #{id}
+            ) t
+        LEFT JOIN menu m ON m.menu_id = t.menu_id
+  </select>
+
+  <select id="queryAllRoleUri" resultMap="roleRouteResultMap">
+    select
+    role_id
+    from role
+  </select>
+
+  <resultMap id="roleRouteResultMap" type="com.fanfan.dto.RoleRouteDTO">
+    <id property="roleId" column="role_id" javaType="Integer" jdbcType="INTEGER"></id>
+    <collection property="uriList" column="role_id" select="queryUriByRoleId">
+    </collection>
+  </resultMap>
+
+  <select id="queryUriByRoleId" resultType="java.lang.String">
+    SELECT
+        mr.route_url
+    FROM
+        (
+            SELECT
+                menu_id
+            FROM
+                menu_role
+            WHERE
+                role_id = #{id}
+        ) t
+    LEFT JOIN menu m ON m.menu_id = t.menu_id
+    LEFT JOIN menu_route mr on mr.menu_id = m.menu_id
+    WHERE mr.route_url is not NULL
+  </select>
+  <select id="queryTallestLevel" parameterType="java.lang.String"
+          resultType="java.lang.Integer">
+    SELECT
+        role_id
+    FROM
+        (
+            SELECT
+                user_id
+            FROM
+                `user`
+            WHERE
+                username = #{username}
+        ) t
+    LEFT JOIN user_role ur ON ur.user_id = t.user_id
+  </select>
+</mapper>
